@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kewnric's Answer Sheet</title>
+  <link id="favicon" rel="icon" href="Status_Open-Logo.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+      background-color: #2e5353; /* Darker teal */
+      background-image: url('Background.jpg'); /* Ensure you have this image or remove/replace */
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center top;
+      background-size: cover;
+      color: #e0e0e0; /* Lighter text for better contrast */
+      transition: background-color 0.3s ease;
+    }
+
+    h1, h2 {
+      color: #d1ba8d; /* Gold accent for headers */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .controls, .section-controls-header, .section-controls-footer {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+     .section-controls-header button, .section-controls-footer button {
+        margin-right: 0; /* Removed specific margin for more consistent gap */
+    }
+
+    button, input[type="button"], input[type="submit"] {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white; /* White text on blue buttons */
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 3px 6px rgba(0,123,255,0.3);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    }
+    button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+      background-color: #0056b3;
+      box-shadow: 0 5px 12px rgba(0,86,179,0.5);
+    }
+    button:active, input[type="button"]:active, input[type="submit"]:active {
+      background-color: #00408d;
+      box-shadow: none;
+      transform: translateY(1px);
+    }
+    button.danger {
+        background-color: #dc3545;
+    }
+    button.danger:hover {
+        background-color: #c82333;
+    }
+    button.warning {
+        background-color: #ffc107;
+        color: black;
+    }
+    button.warning:hover {
+        background-color: #e0a800;
+    }
+
+
+    .section {
+      background-color: rgba(59, 67, 84, 0.85); /* Semi-transparent */
+      color: #ccc;
+      border: 1px solid #d1ba8d;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+      transition: box-shadow 0.3s ease;
+    }
+    .section:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .section h2 {
+      margin-top: 0;
+      display: inline-block;
+    }
+    .section h2.editable {
+        border: 1px dashed #ccc;
+        padding: 5px;
+        cursor: text;
+    }
+
+    input[type="text"], input[type="number"], textarea, select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      color: black; /* Ensure text in inputs is black */
+      background-color: #f8f9fa;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 8px rgba(0,123,255,0.6);
+    }
+    textarea.key {
+      width: calc(100% - 24px); /* Account for padding */
+      height: 80px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      background-color: #ffffff;
+      color: #333; /* Darker text for table content */
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    th, td {
+      border: 1px solid #dee2e6; /* Lighter border */
+      text-align: center;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+    }
+    th {
+      background-color: #e9ecef; /* Lighter header */
+      font-weight: 600;
+      color: #495057;
+    }
+    td label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px; /* Ensure consistent height */
+      cursor: pointer;
+      padding: 0; /* Remove padding from label for tighter fit */
+    }
+     td input[type="radio"] {
+      margin: 0;
+      width: 18px; /* Slightly larger radio buttons */
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .hidden { display: none !important; }
+    .correct { background-color: #d4edda !important; color: #155724 !important; } /* Bootstrap success colors */
+    .wrong { background-color: #f8d7da !important; color: #721c24 !important; } /* Bootstrap danger colors */
+    .selected { background-color: #bee5eb !important; } /* Bootstrap info color for selected */
+    .actual-correct { box-shadow: 0 0 0 2px #28a745 inset !important; } /* Green outline for actual correct answer */
+    .overdue .timerDisplay { color: #dc3545; font-weight: bold; }
+    .overdue { border: 2px solid #dc3545; }
+
+
+    #recordsContainer { margin-top: 25px; }
+    #recordsTable th, #recordsTable td { padding: 10px 14px; }
+    #recordsTable button { padding: 5px 10px; font-size: 0.9em; }
+
+
+    .output {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.15rem;
+      color: #f0f0f0; /* Lighter for better contrast on section bg */
+      padding: 10px;
+      background-color: rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
+
+    .timer-input { width: 70px; margin-left: 5px; }
+    .timerDisplay { margin-left: 10px; font-weight: bold; }
+    .question-input { width: 60px; margin-right: 5px;}
+
+    /* Ensure placeholder text is visible */
+    ::placeholder { color: #6c757d; opacity: 1; }
+    input:-ms-input-placeholder { color: #6c757d; }
+    input::-ms-input-placeholder { color: #6c757d; }
+
+  </style>
+</head>
+<body>
+  <h1>Kewnric's Answer Sheet</h1>
+  <p style="text-align: center; font-style: italic;">[ Study smart, not just hard! ]</p>
+
+  <div class="controls">
+    <input id="newSectionLabel" placeholder="Section Label" type="text"/>
+    <select id="newSectionChoices">
+        <option value="5" selected>5 Choices (A-E)</option>
+        <option value="4">4 Choices (A-D)</option>
+        <option value="3">3 Choices (A-C)</option>
+    </select>
+    <button id="addSectionBtn">Add Section</button>
+    <button id="toggleRecordsBtn">Show Records</button>
+    <button id="resetRecordAllBtn" class="warning">Reset & Record All</button>
+    <button id="exportRecordsBtn" class="hidden">Export Records to CSV</button>
+  </div>
+  <div class="controls">
+    <input id="bulkSectionInput" placeholder="Bulk Add: Math 10 | Science 5 (A-E default)" style="flex-grow:1;" type="text"/>
+    <button id="confirmBulkAddBtn">Confirm Bulk Add</button>
+  </div>
+   <div class="controls">
+    <button id="clearAllSectionsBtn" class="danger">Clear All Sections</button>
+    <button id="clearAllDataBtn" class="danger">Clear All Data (incl. Records & Storage)</button>
+  </div>
+
+  <div id="sectionsContainer"></div>
+
+  <div id="recordsContainer" class="hidden">
+    <h2>Attempt History</h2>
+    <table id="recordsTable">
+      <thead><tr><th>Attempt</th><th>Date | Time</th><th>Details</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let sectionCounter = 0;
+    let attemptCounter = 0;
+    let records = [];
+    const CHOICES_LABELS = ['A', 'B', 'C', 'D', 'E'];
+
+    // --- DOM Elements ---
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    const newSectionLabelInput = document.getElementById('newSectionLabel');
+    const newSectionChoicesInput = document.getElementById('newSectionChoices');
+    const addSectionBtn = document.getElementById('addSectionBtn');
+    const toggleRecordsBtn = document.getElementById('toggleRecordsBtn');
+    const exportRecordsBtn = document.getElementById('exportRecordsBtn');
+    const resetRecordAllBtn = document.getElementById('resetRecordAllBtn');
+    const bulkSectionInput = document.getElementById('bulkSectionInput');
+    const confirmBulkAddBtn = document.getElementById('confirmBulkAddBtn');
+    const clearAllSectionsBtn = document.getElementById('clearAllSectionsBtn');
+    const clearAllDataBtn = document.getElementById('clearAllDataBtn');
+    const recordsTableBody = document.querySelector('#recordsTable tbody');
+    const recordsContainer = document.getElementById('recordsContainer');
+
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadState();
+        updateRecordsDisplay(); // Ensure records are displayed if loaded
+
+        addSectionBtn.addEventListener('click', () => {
+            const label = newSectionLabelInput.value.trim() || `Section ${sectionsContainer.children.length + 1}`;
+            const numChoices = parseInt(newSectionChoicesInput.value);
+            addSection(label, numChoices);
+            newSectionLabelInput.value = '';
+            saveState();
+        });
+
+        toggleRecordsBtn.addEventListener('click', toggleRecordsVisibility);
+        exportRecordsBtn.addEventListener('click', exportRecordsToCSV);
+        resetRecordAllBtn.addEventListener('click', handleResetRecordAll);
+        confirmBulkAddBtn.addEventListener('click', handleBulkAdd);
+        clearAllSectionsBtn.addEventListener('click', handleClearAllSections);
+        clearAllDataBtn.addEventListener('click', handleClearAllData);
+
+    });
+
+    // --- Section Management ---
+    function addSection(label, numChoices = 5, questions = [], key = "", timerState = null, sectionIdOverride = null) {
+        const sectionId = sectionIdOverride || `sec${++sectionCounter}`;
+        if (!sectionIdOverride) { // Only increment if it's a truly new section not from loadState
+           // sectionCounter has already been incremented if sectionIdOverride is null
+        } else {
+            // Ensure sectionCounter is at least the max ID loaded
+            const idNum = parseInt(sectionIdOverride.replace('sec',''));
+            if (idNum > sectionCounter) sectionCounter = idNum;
+        }
+
+
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'section';
+        sectionDiv.id = sectionId;
+        sectionDiv.dataset.numChoices = numChoices;
+
+        sectionDiv.innerHTML = `
+            <div class="section-controls-header">
+                <h2 contenteditable="false">${label}</h2>
+                <button class="editLabelBtn">Edit Label</button>
+                <button class="saveLabelBtn hidden">Save Label</button>
+                <button class="deleteSectionBtn danger">Delete Section</button>
+            </div>
+            <div class="section-controls-header">
+                <input type="number" class="question-input" value="5" min="1" title="Number of questions to add">
+                <button class="addQBtn">Add Questions</button>
+                <button class="remQBtn">Remove 1 Question</button>
+                <button class="toggleKeyBtn">Hide Answer Key</button>
+            </div>
+            <textarea class="key" placeholder="1 = A\n2 = B\n...">${key}</textarea>
+            <button class="checkAnsBtn">Check Answers</button>
+            <table>
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+            <div class="output"></div>
+            <div class="section-controls-footer">
+                Timer (min): <input type="number" class="timer-input" min="1" value="${timerState ? timerState.initialMinutes : ''}"/>
+                <button class="timerActionBtn">Start Timer</button>
+                <span class="timerDisplay">${timerState && timerState.timeLeft !== null ? formatTime(timerState.timeLeft) : ''}</span>
+            </div>
+        `;
+        sectionsContainer.appendChild(sectionDiv);
+        updateTableHeaders(sectionDiv, numChoices);
+        setupSectionEventListeners(sectionDiv);
+
+        if (questions.length > 0) {
+            setQuestionCount(sectionDiv, questions.length);
+            questions.forEach((q, index) => {
+                if (q.selected) {
+                    const radio = sectionDiv.querySelector(`input[name="${sectionId}_q${index + 1}"][value="${q.selected}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.closest('td').classList.add('selected');
+                    }
+                }
+            });
+        } else {
+            setQuestionCount(sectionDiv, 3); // Default to 3 questions
+        }
+        
+        if (timerState && timerState.endTime) {
+            restoreTimer(sectionDiv, timerState);
+        }
+    }
+
+    function updateTableHeaders(sectionDiv, numChoices) {
+        const thead = sectionDiv.querySelector('thead');
+        let headerHTML = '<tr><th>#</th>';
+        for (let i = 0; i < numChoices; i++) {
+            headerHTML += `<th>${CHOICES_LABELS[i]}</th>`;
+        }
+        headerHTML += '</tr>';
+        thead.innerHTML = headerHTML;
+    }
+
+    function setupSectionEventListeners(sectionDiv) {
+        const sectionId = sectionDiv.id;
+        const h2 = sectionDiv.querySelector('h2');
+        const editLabelBtn = sectionDiv.querySelector('.editLabelBtn');
+        const saveLabelBtn = sectionDiv.querySelector('.saveLabelBtn');
+        const deleteSectionBtn = sectionDiv.querySelector('.deleteSectionBtn');
+        const addQBtn = sectionDiv.querySelector('.addQBtn');
+        const questionInput = sectionDiv.querySelector('.question-input');
+        const remQBtn = sectionDiv.querySelector('.remQBtn');
+        const toggleKeyBtn = sectionDiv.querySelector('.toggleKeyBtn');
+        const keyTextarea = sectionDiv.querySelector('.key');
+        const checkAnsBtn = sectionDiv.querySelector('.checkAnsBtn');
+        const timerInputAction = sectionDiv.querySelector('.timer-input');
+        const timerActionBtn = sectionDiv.querySelector('.timerActionBtn');
+
+        editLabelBtn.addEventListener('click', () => {
+            h2.contentEditable = 'true';
+            h2.classList.add('editable');
+            h2.focus();
+            editLabelBtn.classList.add('hidden');
+            saveLabelBtn.classList.remove('hidden');
+        });
+
+        saveLabelBtn.addEventListener('click', () => {
+            h2.contentEditable = 'false';
+            h2.classList.remove('editable');
+            editLabelBtn.classList.remove('hidden');
+            saveLabelBtn.classList.add('hidden');
+            saveState();
+        });
+        h2.addEventListener('blur', () => { // Also save on blur if it was editable
+            if(h2.contentEditable === 'true') {
+                h2.contentEditable = 'false';
+                h2.classList.remove('editable');
+                editLabelBtn.classList.remove('hidden');
+                saveLabelBtn.classList.add('hidden');
+                saveState();
+            }
+        });
+
+
+        deleteSectionBtn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to delete section "${h2.textContent}"?`)) {
+                if (sectionDiv.timerInterval) clearInterval(sectionDiv.timerInterval);
+                sectionDiv.remove();
+                saveState();
+            }
+        });
+
+        addQBtn.addEventListener('click', () => {
+            const numToAdd = parseInt(questionInput.value) || 1;
+            addRowsToSection(sectionDiv, numToAdd);
+            saveState();
+        });
+        remQBtn.addEventListener('click', () => {
+            removeRowsFromSection(sectionDiv, 1);
+            saveState();
+        });
+
+        toggleKeyBtn.addEventListener('click', () => {
+            const isHidden = keyTextarea.classList.toggle('hidden');
+            checkAnsBtn.classList.toggle('hidden', isHidden);
+            toggleKeyBtn.textContent = isHidden ? 'Show Answer Key' : 'Hide Answer Key';
+        });
+
+        checkAnsBtn.addEventListener('click', () => checkAnswers(sectionDiv));
+
+        let lastSelectedRadio = {}; // For unchecking radio
+        sectionDiv.addEventListener('click', (e) => {
+            if (e.target.matches('input[type="radio"]')) {
+                const radio = e.target;
+                const name = radio.name;
+                if (lastSelectedRadio[name] === radio && radio.checked) {
+                    radio.checked = false;
+                    lastSelectedRadio[name] = null;
+                } else {
+                    lastSelectedRadio[name] = radio;
+                }
+                sectionDiv.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest('td').classList.remove('selected'));
+                if (radio.checked) radio.closest('td').classList.add('selected');
+                saveState();
+            }
+        });
+
+        timerActionBtn.addEventListener('click', () => handleTimerAction(sectionDiv));
+        timerInputAction.addEventListener('change', saveState); // Save if timer input value changes
+        keyTextarea.addEventListener('input', saveState); // Save if key changes
+    }
+
+    function setQuestionCount(sectionDiv, targetCount) {
+        const tbody = sectionDiv.querySelector('tbody');
+        const currentCount = tbody.children.length;
+        if (targetCount > currentCount) {
+            addRowsToSection(sectionDiv, targetCount - currentCount);
+        } else if (targetCount < currentCount) {
+            removeRowsFromSection(sectionDiv, currentCount - targetCount);
+        }
+    }
+
+    function addRowsToSection(sectionDiv, n) {
+        const tbody = sectionDiv.querySelector('tbody');
+        const sectionId = sectionDiv.id;
+        const numChoices = parseInt(sectionDiv.dataset.numChoices);
+        for (let i = 0; i < n; i++) {
+            const idx = tbody.children.length + 1;
+            const tr = document.createElement('tr');
+            let cellsHTML = `<td>${idx}</td>`;
+            for (let j = 0; j < numChoices; j++) {
+                cellsHTML += `<td><label><input type="radio" name="${sectionId}_q${idx}" value="${CHOICES_LABELS[j]}"></label></td>`;
+            }
+            tr.innerHTML = cellsHTML;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function removeRowsFromSection(sectionDiv, n) {
+        const tbody = sectionDiv.querySelector('tbody');
+        while (n-- > 0 && tbody.lastChild) {
+            tbody.removeChild(tbody.lastChild);
+        }
+    }
+    
+    function handleBulkAdd() {
+        const value = bulkSectionInput.value.trim();
+        if (!value) return;
+        const entries = value.split(/[,|\\]+/);
+        entries.forEach(entry => {
+            const match = entry.trim().match(/(.+?)\s+(\d+)(?:\s*\((A-[CDE])\))?$/i); // Matches "Name Count (A-C/D/E optional)"
+            if (match) {
+                const name = match[1].trim();
+                const count = parseInt(match[2]);
+                let numChoices = 5; // Default
+                if (match[3]) { // A-C, A-D, A-E
+                    const choiceRange = match[3].toUpperCase();
+                    if (choiceRange === 'A-C') numChoices = 3;
+                    else if (choiceRange === 'A-D') numChoices = 4;
+                    else if (choiceRange === 'A-E') numChoices = 5;
+                }
+
+                if (count <= 0) return;
+                let sectionDiv = Array.from(sectionsContainer.children).find(sec => sec.querySelector('h2').textContent.trim() === name);
+                if (!sectionDiv) {
+                    addSection(name, numChoices);
+                    sectionDiv = sectionsContainer.lastChild;
+                } else { // Section exists, update numChoices if different
+                    const currentNumChoices = parseInt(sectionDiv.dataset.numChoices);
+                    if (currentNumChoices !== numChoices) {
+                         sectionDiv.dataset.numChoices = numChoices;
+                         updateTableHeaders(sectionDiv, numChoices);
+                         // Existing answers might be for different choice set, clear them or adapt (clearing is simpler)
+                         sectionDiv.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                         sectionDiv.querySelectorAll('td.selected').forEach(td => td.classList.remove('selected'));
+
+                    }
+                }
+                setQuestionCount(sectionDiv, count);
+            }
+        });
+        bulkSectionInput.value = '';
+        saveState();
+    }
+
+    function handleClearAllSections() {
+        if (confirm("Are you sure you want to clear ALL sections? This cannot be undone for the current session if not saved.")) {
+            sectionsContainer.innerHTML = '';
+            sectionCounter = 0; // Reset counter
+            saveState();
+        }
+    }
+    
+    function handleClearAllData() {
+        if (confirm("Are you sure you want to clear ALL data? This includes all sections, records, and saved progress from local storage. This action is irreversible.")) {
+            localStorage.removeItem('mcqAnswerSheetState');
+            sectionsContainer.innerHTML = '';
+            records = [];
+            sectionCounter = 0;
+            attemptCounter = 0;
+            updateRecordsDisplay();
+            alert("All data has been cleared.");
+        }
+    }
+
+
+    // --- Answer Checking ---
+    function parseAnswerKey(sectionDiv) {
+        const keyText = sectionDiv.querySelector('.key').value;
+        const numChoices = parseInt(sectionDiv.dataset.numChoices);
+        const validChoices = CHOICES_LABELS.slice(0, numChoices);
+        const key = {};
+        keyText.split('\n').forEach(line => {
+            const parts = line.split('=').map(s => s.trim());
+            if (parts.length === 2) {
+                const num = parseInt(parts[0]);
+                const ans = parts[1].toUpperCase();
+                if (!isNaN(num) && validChoices.includes(ans)) {
+                    key[num] = ans;
+                }
+            }
+        });
+        return key;
+    }
+
+    function evaluateSection(sectionDiv, answerKey) {
+        let correctCount = 0;
+        let totalAnswerable = 0;
+        const wrongList = [];
+        const questionsData = [];
+
+        sectionDiv.querySelectorAll('tbody tr').forEach((row, idx) => {
+            const questionNumber = parseInt(row.cells[0].textContent);
+            const selectedRadio = row.querySelector('input[type="radio"]:checked');
+            const selectedValue = selectedRadio ? selectedRadio.value : null;
+            
+            questionsData.push({ num: questionNumber, selected: selectedValue });
+
+            if (answerKey[questionNumber]) {
+                totalAnswerable++;
+                if (selectedValue === answerKey[questionNumber]) {
+                    correctCount++;
+                } else {
+                    wrongList.push(questionNumber);
+                }
+            }
+        });
+        return { correctCount, totalAnswerable, wrongList, questionsData };
+    }
+
+    function checkAnswers(sectionDiv) {
+        const answerKey = parseAnswerKey(sectionDiv);
+        const { correctCount, totalAnswerable, wrongList } = evaluateSection(sectionDiv, answerKey);
+
+        sectionDiv.querySelectorAll('tbody tr').forEach(row => {
+            row.classList.remove('correct', 'wrong');
+            Array.from(row.cells).forEach(cell => cell.classList.remove('actual-correct')); // Clear previous actual-correct
+            const questionNumber = parseInt(row.cells[0].textContent);
+            if (answerKey[questionNumber]) {
+                const selectedRadio = row.querySelector('input[type="radio"]:checked');
+                const correctAnswer = answerKey[questionNumber];
+                const isCorrect = selectedRadio && selectedRadio.value === correctAnswer;
+                row.classList.add(isCorrect ? 'correct' : 'wrong');
+
+                // Highlight the actual correct answer
+                const correctChoiceIndex = CHOICES_LABELS.indexOf(correctAnswer);
+                if (correctChoiceIndex !== -1 && row.cells[correctChoiceIndex + 1]) { // +1 for '#' column
+                    row.cells[correctChoiceIndex + 1].classList.add('actual-correct');
+                }
+            }
+        });
+        sectionDiv.querySelector('.output').textContent = `Score: ${correctCount} / ${totalAnswerable}`;
+        saveState(); // Save state after checking as highlights are visual
+    }
+
+    // --- Timer Logic ---
+    function handleTimerAction(sectionDiv) {
+        const timerActionBtn = sectionDiv.querySelector('.timerActionBtn');
+        const timerInput = sectionDiv.querySelector('.timer-input');
+        const timerDisplay = sectionDiv.querySelector('.timerDisplay');
+
+        if (sectionDiv.timerInterval) { // Timer is running or paused
+            if (sectionDiv.isPaused) { // Resume
+                const remainingMs = sectionDiv.remainingTimeOnPause;
+                sectionDiv.endTime = Date.now() + remainingMs;
+                sectionDiv.timerInterval = setInterval(() => updateTimer(sectionDiv), 1000);
+                timerActionBtn.textContent = 'Pause Timer';
+                timerActionBtn.classList.remove('warning');
+                sectionDiv.isPaused = false;
+            } else { // Pause
+                clearInterval(sectionDiv.timerInterval);
+                sectionDiv.remainingTimeOnPause = sectionDiv.endTime - Date.now();
+                timerActionBtn.textContent = 'Resume Timer';
+                timerActionBtn.classList.add('warning');
+                sectionDiv.isPaused = true;
+            }
+        } else { // Start timer
+            const minutes = parseInt(timerInput.value);
+            if (isNaN(minutes) || minutes <= 0) {
+                alert('Please enter a valid positive number of minutes.');
+                return;
+            }
+            sectionDiv.initialMinutes = minutes; // Store for state saving
+            sectionDiv.endTime = Date.now() + minutes * 60000;
+            sectionDiv.classList.remove('overdue');
+            timerDisplay.classList.remove('overdue');
+            updateTimer(sectionDiv); // Initial display
+            sectionDiv.timerInterval = setInterval(() => updateTimer(sectionDiv), 1000);
+            timerActionBtn.textContent = 'Pause Timer';
+            timerActionBtn.classList.remove('warning'); // Ensure it's not in warning state if restarted
+            sectionDiv.isPaused = false;
+        }
+        saveState();
+    }
+    
+    function restoreTimer(sectionDiv, timerState) {
+        const timerActionBtn = sectionDiv.querySelector('.timerActionBtn');
+        const timerDisplay = sectionDiv.querySelector('.timerDisplay');
+        const timerInput = sectionDiv.querySelector('.timer-input');
+
+        timerInput.value = timerState.initialMinutes;
+        sectionDiv.initialMinutes = timerState.initialMinutes;
+
+        if (timerState.isPaused && timerState.remainingTimeOnPause > 0) {
+            sectionDiv.isPaused = true;
+            sectionDiv.remainingTimeOnPause = timerState.remainingTimeOnPause;
+            timerDisplay.textContent = formatTime(timerState.remainingTimeOnPause);
+            timerActionBtn.textContent = 'Resume Timer';
+            timerActionBtn.classList.add('warning');
+        } else if (timerState.endTime && timerState.endTime > Date.now()) {
+            sectionDiv.endTime = timerState.endTime;
+            sectionDiv.isPaused = false;
+            updateTimer(sectionDiv);
+            sectionDiv.timerInterval = setInterval(() => updateTimer(sectionDiv), 1000);
+            timerActionBtn.textContent = 'Pause Timer';
+        } else if (timerState.endTime && timerState.endTime <= Date.now()) {
+            timerDisplay.textContent = 'Time is up!';
+            sectionDiv.classList.add('overdue');
+            timerDisplay.classList.add('overdue');
+            timerActionBtn.textContent = 'Start Timer'; // Allow restart
+        }
+    }
+
+
+    function updateTimer(sectionDiv) {
+        const timerDisplay = sectionDiv.querySelector('.timerDisplay');
+        const timerActionBtn = sectionDiv.querySelector('.timerActionBtn');
+        const msLeft = sectionDiv.endTime - Date.now();
+
+        if (msLeft <= 0) {
+            clearInterval(sectionDiv.timerInterval);
+            sectionDiv.timerInterval = null; // Clear interval ID
+            timerDisplay.textContent = 'Time is up!';
+            sectionDiv.classList.add('overdue');
+            timerDisplay.classList.add('overdue');
+            timerActionBtn.textContent = 'Start Timer'; // Reset button to allow starting new timer
+            sectionDiv.isPaused = false; // Ensure not stuck in paused state
+        } else {
+            timerDisplay.textContent = formatTime(msLeft);
+        }
+        saveState(); // Save timer progress
+    }
+
+    function formatTime(ms) {
+        if (ms <=0) return "0:00";
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // --- Records Management ---
+    function handleResetRecordAll() {
+        if (confirm("Are you sure you want to record scores for ALL sections and reset them?")) {
+            recordAndResetAllSections();
+        }
+    }
+
+    function recordAndResetAllSections() {
+        const now = new Date();
+        const timestamp = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getFullYear()).slice(-2)} | ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        
+        const currentAttemptNumber = ++attemptCounter; // Increment first
+
+        const sectionDetails = Array.from(sectionsContainer.children).map(sec => {
+            const answerKey = parseAnswerKey(sec);
+            const { correctCount, totalAnswerable, wrongList } = evaluateSection(sec, answerKey);
+            const sectionName = sec.querySelector('h2').textContent;
+            const percentage = totalAnswerable ? ((correctCount / totalAnswerable) * 100).toFixed(1) + '%' : '0%';
+            return `${sectionName}: ${correctCount}/${totalAnswerable} (${percentage}) Wrong: ${wrongList.join(',') || '-'}`;
+        }).join(' | ');
+
+        records.push({
+            attempt: currentAttemptNumber,
+            timestamp: timestamp,
+            details: sectionDetails
+        });
+        updateRecordsDisplay();
+
+        // Reset sections
+        Array.from(sectionsContainer.children).forEach(sec => {
+            sec.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            sec.querySelectorAll('.correct, .wrong, .selected, .actual-correct').forEach(el => el.classList.remove('correct', 'wrong', 'selected', 'actual-correct'));
+            sec.querySelector('.output').textContent = '';
+            // Optionally reset timer
+            if (sec.timerInterval) clearInterval(sec.timerInterval);
+            sec.timerInterval = null;
+            sec.isPaused = false;
+            sec.remainingTimeOnPause = 0;
+            sec.endTime = null;
+            sec.querySelector('.timerDisplay').textContent = '';
+            sec.querySelector('.timerActionBtn').textContent = 'Start Timer';
+            sec.classList.remove('overdue');
+             sec.querySelector('.timerDisplay').classList.remove('overdue');
+
+        });
+        saveState();
+    }
+
+    function updateRecordsDisplay() {
+        recordsTableBody.innerHTML = '';
+        records.forEach((record, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${record.attempt}</td>
+                <td>${record.timestamp}</td>
+                <td>${record.details}</td>
+                <td><button class="deleteRecordBtn danger" data-index="${index}">Delete</button></td>
+            `;
+            recordsTableBody.appendChild(tr);
+        });
+        
+        recordsTableBody.querySelectorAll('.deleteRecordBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const recordIndex = parseInt(e.target.dataset.index);
+                deleteRecord(recordIndex);
+            });
+        });
+
+        if (records.length > 0) {
+            recordsContainer.classList.remove('hidden');
+            exportRecordsBtn.classList.remove('hidden');
+            if(toggleRecordsBtn.textContent.includes("Show")) toggleRecordsBtn.textContent = 'Hide Records';
+
+        } else {
+            if(!recordsContainer.classList.contains('hidden') && toggleRecordsBtn.textContent.includes("Hide")) {
+                 // Only hide if it was meant to be visible but now empty
+                recordsContainer.classList.add('hidden');
+                toggleRecordsBtn.textContent = 'Show Records';
+            }
+            exportRecordsBtn.classList.add('hidden');
+        }
+    }
+    
+    function deleteRecord(index) {
+        if (confirm(`Are you sure you want to delete record #${records[index].attempt}?`)) {
+            records.splice(index, 1);
+            updateRecordsDisplay();
+            saveState();
+        }
+    }
+
+
+    function toggleRecordsVisibility() {
+        const isHidden = recordsContainer.classList.toggle('hidden');
+        toggleRecordsBtn.textContent = isHidden ? 'Show Records' : 'Hide Records';
+        if (!isHidden && records.length > 0) {
+            exportRecordsBtn.classList.remove('hidden');
+        } else if (isHidden) {
+            exportRecordsBtn.classList.add('hidden');
+        }
+    }
+    
+    function exportRecordsToCSV() {
+        if (records.length === 0) {
+            alert("No records to export.");
+            return;
+        }
+        const csvHeader = "Attempt,Date | Time,Details\n";
+        const csvRows = records.map(r => `"${r.attempt}","${r.timestamp}","${r.details.replace(/"/g, '""')}"`).join("\n");
+        const csvContent = csvHeader + csvRows;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-char8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "answer_sheet_records.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            alert("CSV export not supported by your browser.");
+        }
+    }
+
+    // --- State Persistence (Local Storage) ---
+    function saveState() {
+        const sectionsData = Array.from(sectionsContainer.children).map(sec => {
+            const questionRows = sec.querySelectorAll('tbody tr');
+            const questions = Array.from(questionRows).map(row => {
+                const selectedRadio = row.querySelector('input[type="radio"]:checked');
+                return {
+                    selected: selectedRadio ? selectedRadio.value : null
+                };
+            });
+
+            let timerState = {
+                initialMinutes: sec.initialMinutes || null,
+                endTime: sec.endTime || null,
+                isPaused: sec.isPaused || false,
+                remainingTimeOnPause: sec.remainingTimeOnPause || 0,
+                timeLeft: null // Will be calculated on load if running
+            };
+            if (sec.isPaused) {
+                timerState.timeLeft = sec.remainingTimeOnPause;
+            } else if (sec.endTime && sec.endTime > Date.now()) {
+                timerState.timeLeft = sec.endTime - Date.now();
+            }
+
+
+            return {
+                id: sec.id,
+                label: sec.querySelector('h2').textContent,
+                numChoices: parseInt(sec.dataset.numChoices),
+                key: sec.querySelector('.key').value,
+                questions: questions,
+                timer: timerState
+            };
+        });
+
+        const state = {
+            sections: sectionsData,
+            records: records,
+            sectionCounter: sectionCounter,
+            attemptCounter: attemptCounter
+        };
+        localStorage.setItem('mcqAnswerSheetState', JSON.stringify(state));
+    }
+
+    function loadState() {
+        const savedState = localStorage.getItem('mcqAnswerSheetState');
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                sectionCounter = state.sectionCounter || 0;
+                attemptCounter = state.attemptCounter || 0;
+                records = state.records || [];
+
+                sectionsContainer.innerHTML = ''; // Clear existing before loading
+                if (state.sections) {
+                    state.sections.forEach(secData => {
+                        addSection(secData.label, secData.numChoices, secData.questions, secData.key, secData.timer, secData.id);
+                    });
+                }
+                updateRecordsDisplay();
+
+            } catch (e) {
+                console.error("Error loading state from localStorage:", e);
+                // Fallback to default state if parsing fails
+                sectionCounter = 0;
+                attemptCounter = 0;
+                records = [];
+            }
+        }
+         // Set initial state of records visibility based on content
+        if (records.length > 0 && recordsContainer.classList.contains('hidden')) {
+            // If there are records and it's hidden, keep it hidden but update button
+            toggleRecordsBtn.textContent = 'Show Records';
+            exportRecordsBtn.classList.add('hidden'); // Export hidden if main container hidden
+        } else if (records.length > 0 && !recordsContainer.classList.contains('hidden')) {
+            // If there are records and it's shown
+            toggleRecordsBtn.textContent = 'Hide Records';
+            exportRecordsBtn.classList.remove('hidden');
+        } else { // No records
+            recordsContainer.classList.add('hidden');
+            toggleRecordsBtn.textContent = 'Show Records';
+            exportRecordsBtn.classList.add('hidden');
+        }
+    }
+
+  </script>
+</body>
+</html>
